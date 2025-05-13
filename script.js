@@ -11,7 +11,8 @@ const brightnessInput = document.getElementById('brightness');
 const contrastInput = document.getElementById('contrast');
 const rotateSelect = document.getElementById('rotate');
 const flipSelect = document.getElementById('flip');
-const processBtn = document.getElementById('process-btn');
+const borderTypeSelect = document.getElementById('border-type');
+const borderWidthInput = document.getElementById('border-width');
 const pdfToWordBtn = document.getElementById('pdf-to-word');
 const wordToPdfBtn = document.getElementById('word-to-pdf');
 const downloadLink = document.getElementById('download-link');
@@ -52,7 +53,6 @@ function handleFile(file) {
   preview.classList.remove('hidden');
   imageControls.classList.add('hidden');
   docControls.classList.add('hidden');
-  processBtn.classList.add('hidden');
   downloadLink.classList.add('hidden');
   pdfPreview.classList.add('hidden');
   previewImg.classList.add('hidden');
@@ -68,7 +68,7 @@ function handleFile(file) {
         widthInput.value = originalImage.width;
         heightInput.value = originalImage.height;
         imageControls.classList.remove('hidden');
-        processBtn.classList.remove('hidden');
+        updatePreview();
       };
     };
     reader.readAsDataURL(file);
@@ -98,12 +98,9 @@ async function renderPdfPreview(file) {
   pdfPreview.classList.remove('hidden');
 }
 
-// Process image
-processBtn.addEventListener('click', () => {
-  if (!originalImage) {
-    alert('Please upload an image first.');
-    return;
-  }
+// Update preview and prepare download
+function updatePreview() {
+  if (!originalImage) return;
 
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -116,18 +113,36 @@ processBtn.addEventListener('click', () => {
   const quality = parseInt(qualityInput.value) / 100 || 0.8;
   const brightness = parseInt(brightnessInput.value) || 0;
   const contrast = parseInt(contrastInput.value) || 0;
+  const borderType = borderTypeSelect.value;
+  const borderWidth = parseInt(borderWidthInput.value) || 0;
 
   // Apply scale
   width *= scale;
   height *= scale;
 
-  // Adjust canvas size for rotation
+  // Adjust canvas size for border and rotation
+  const totalWidth = width + 2 * borderWidth;
+  const totalHeight = height + 2 * borderWidth;
   if (rotate === 90 || rotate === 270) {
-    canvas.width = height;
-    canvas.height = width;
+    canvas.width = totalHeight;
+    canvas.height = totalWidth;
   } else {
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = totalWidth;
+    canvas.height = totalHeight;
+  }
+
+  // Draw border
+  if (borderType === 'white') {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else if (borderType === 'blur') {
+    // Create blurred version of the image for border
+    ctx.filter = 'blur(10px)';
+    ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+    ctx.filter = 'none';
+    // Draw original image area
+    ctx.fillStyle = 'white';
+    ctx.fillRect(borderWidth, borderWidth, width, height);
   }
 
   // Center and rotate
@@ -144,7 +159,7 @@ processBtn.addEventListener('click', () => {
   // Draw image
   ctx.drawImage(originalImage, -width / 2, -height / 2, width, height);
 
-  // Apply brightness and contrast (simulated AI enhancement)
+  // Apply brightness and contrast
   if (brightness !== 0 || contrast !== 0) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
@@ -163,14 +178,21 @@ processBtn.addEventListener('click', () => {
     ctx.putImageData(imageData, 0, 0);
   }
 
-  // Convert to data URL
+  // Update preview
+  previewImg.src = canvas.toDataURL();
+
+  // Prepare download
   const mimeType = originalImage.src.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
   const dataUrl = canvas.toDataURL(mimeType, quality);
-
-  // Update download link
   downloadLink.href = dataUrl;
   downloadLink.download = 'processed-image.' + (mimeType === 'image/png' ? 'png' : 'jpg');
   downloadLink.classList.remove('hidden');
+}
+
+// Bind input events for live preview
+[widthInput, heightInput, qualityInput, scaleInput, brightnessInput, contrastInput, rotateSelect, flipSelect, borderTypeSelect, borderWidthInput].forEach(input => {
+  input.addEventListener('input', updatePreview);
+  input.addEventListener('change', updatePreview);
 });
 
 // PDF to Word
