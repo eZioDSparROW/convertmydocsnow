@@ -1,0 +1,16 @@
+#drop-area:hover {
+  background-color: #f0f9ff;
+}
+
+input, select, button {
+  transition: all 0.3s ease;
+}
+
+button:hover, a:hover {
+  transform: scale(1.02);
+}
+
+#pdf-preview canvas {
+  max-width: 100%;
+  height: auto;
+}
