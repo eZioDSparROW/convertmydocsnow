@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConvertMyDocsNow - AI Image Editor & Document Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.3.0/docx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto text-center">
+      <h1 class="text-3xl font-bold">ConvertMyDocsNow</h1>
+      <p class="mt-2">Free AI-Powered Image Editing & Document Conversion</p>
+    </div>
+  </header>
+
+  <main class="container mx-auto py-8 flex-grow">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+      <div id="drop-area" class="border-2 border-dashed border-gray-400 p-6 text-center rounded-lg mb-4">
+        <p>Drag and drop your image or document here or</p>
+        <input type="file" id="file-input" accept="image/*,.pdf,.docx" class="mt-2">
+        <p class="text-sm text-gray-500 mt-2">Supported: JPEG, PNG, WEBP, HEIC, BMP, GIF, PDF, DOCX</p>
+      </div>
+
+      <div id="preview" class="hidden mb-4">
+        <h3 class="text-lg font-semibold">Preview</h3>
+        <img id="preview-img" class="max-w-full h-auto rounded-lg">
+        <div id="pdf-preview" class="hidden"></div>
+      </div>
+
+      <div id="image-controls" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium">Width (px)</label>
+          <input type="number" id="width" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Height (px)</label>
+          <input type="number" id="height" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Quality (1-100)</label>
+          <input type="number" id="quality" value="80" min="1" max="100" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Scale (%)</label>
+          <input type="number" id="scale" value="100" min="1" max="200" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Brightness (-100 to 100)</label>
+          <input type="number" id="brightness" value="0" min="-100" max="100" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Contrast (-100 to 100)</label>
+          <input type="number" id="contrast" value="0" min="-100" max="100" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Rotate</label>
+          <select id="rotate" class="w-full p-2 border rounded">
+            <option value="0">No Rotation</option>
+            <option value="90">90° CW</option>
+            <option value="180">180°</option>
+            <option value="270">270° CW</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Flip</label>
+          <select id="flip" class="w-full p-2 border rounded">
+            <option value="none">No Flip</option>
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="doc-controls" class="hidden mb-4">
+        <h3 class="text-lg font-semibold">Document Conversion</h3>
+        <p class="text-sm text-gray-500">Convert PDF to Word or Word to PDF.</p>
+        <div class="flex gap-4 mt-2">
+          <button id="pdf-to-word" class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">PDF to Word</button>
+          <button id="word-to-pdf" class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Word to PDF</button>
+        </div>
+      </div>
+
+      <button id="process-btn" class="hidden w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Process Image</button>
+      <a id="download-link" class="hidden w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 text-center mt-4">Download Processed File</a>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto text-center">
+      <p>© 2025 ConvertMyDocsNow. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
