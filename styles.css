@@ -2,7 +2,7 @@
   background-color: #f0f9ff;
 }
 
-input, select, button {
+input, select, button, a {
   transition: all 0.3s ease;
 }
 
@@ -14,3 +14,8 @@ button:hover, a:hover {
   max-width: 100%;
   height: auto;
 }
+
+#preview-img {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+ hummed Preview Image Enhancements
